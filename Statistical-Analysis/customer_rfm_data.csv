@@ -1,0 +1,10 @@
+customer_id,first_name,last_name,recency,frequency,monetary
+1,Allan,Sherwood,5,2,2300.61
+2,Barry,Zimmer,6,1,303.79
+3,Christine,Brown,4,1,1678.60
+4,David,Goldstein,0,2,788.30
+5,Erin,Valentino,3,1,299.00
+6,"Frank Lee",Wilson,2,1,1539.28
+7,Gary,Hernandez,1,1,679.99
+8,Heather,Esway,NULL,0,NULL
+9,Rick,Raven,NULL,0,NULL
