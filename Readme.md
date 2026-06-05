@@ -1,19 +1,25 @@
 Checking Shopping Habits and Credit Risks for an Online Store
-1. Summary of the Project
-This project builds a step-by-step data system that takes messy, scattered lists from an online store's database and turns them into clear business insights.
+# 1. What is this project about?
+In this project, I wanted to learn how to take messy shopping data from an online store and use it to solve a real business problem: figuring out which customers are safe to deal with and which ones might be a financial risk.
 
-Using SQL, we pull separate spreadsheets (like lists of customers, orders, and items bought) and blend them into one master list. Then, using Python, we run a sorting model that automatically groups customers into three clear risk levels based on how often they shop, how recently they visited, and how much money they spent. This helps a business know exactly which customers are safe to work with and which ones might be a financial risk.
+I built a basic data path that does three things:
 
-2. The Tools and How Data Moves
-The project is divided into two simple steps:
+I used SQL to find and link data tables together.
 
-The Data Storage Layer: Hosted inside MySQL, where all the store's everyday shopping records are safely kept in organized tables.
+I used Python to clean up missing information and practice running a basic machine learning model that automatically groups shoppers.
 
-The Smart Sorting Layer: Built inside a Jupyter Notebook (Python), where we clean the data, fix missing information, and run our automatic grouping model.
+I used Microsoft Excel to make a simple, clean dashboard so a manager can visually see what the groups mean.
 
-3. The Code We Used
-Step 3.1: Combining Separate Sheets (SQL)
-This code reaches into the database, links four different sheets together using customer ID numbers, and spits out a clean table showing everyone's shopping history.
+# 2. The Tools I Used and Why
+MySQL Workbench: This is where the store's data sheets (tables) are kept. I used it to search and grab the exact information I needed.
+
+Jupyter Notebook (Python): I used Python because it has great tools for cleaning up messy spreadsheets and running math formulas that sort things automatically.
+
+Microsoft Excel: I used Excel to build the final charts because it is clean, easy to look at, and great for making reports that regular people can understand.
+
+# 3. Step-by-Step: What I Did
+Step 3.1: Linking the Tables (SQL)
+The store's data was scattered across four different sheets (Customers, Orders, Items Bought, and Products). I wrote this SQL code to link them all together using customer ID numbers so I could get a single list of names, dates, and prices:
 
 SQL
 SELECT 
@@ -36,8 +42,11 @@ ORDER BY
     c.last_name ASC, 
     o.order_date ASC, 
     p.product_name ASC;
-Step 3.2: Grouping the Customers (Python)
-This script reads our store data, immediately changes any blank spaces or missing math values to 0 so the computer doesn't crash, and splits the shoppers into three groups.
+
+Step 3.2: Cleaning Data and Grouping Customers (Python)
+Once I had the list, I brought it into Python. I noticed some spots were completely empty, which can break your code. I fixed that by replacing blank spots with 0.
+
+Then, I ran a basic algorithm called K-Means Clustering. This algorithm looks at three things: how recently a customer shopped, how often they buy, and how much money they spend. It automatically split the customers into 3 clusters (groups). Finally, I saved the results as a new spreadsheet.
 
 Python
 import pandas as pd
@@ -45,59 +54,60 @@ import warnings
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 
-# Hide system warnings to keep our report clean
+Turn off ugly warning messages to keep the screen clean
 warnings.filterwarnings('ignore')
 
-# 1. Load the spreadsheet we got from SQL
+1. Load the spreadsheet file
 df = pd.read_csv('customer_rfm_data.csv') 
 
-# 2. Grab the columns for days since last purchase, total orders, and total spend
+2. Pick the columns we want to look at
 features = df[['recency', 'frequency', 'monetary']]
 
-# 3. FIX ERRORS: Change any blank or empty spots to 0
+3. FIXING ERRORS: Change any blank/empty spaces to 0
 features = features.fillna(0)
 
-# 4. Balance the numbers so large currency amounts don't confuse the model
+4. Scale the numbers so big dollar amounts don't confuse the system
 scaler = StandardScaler()
 scaled_features = scaler.fit_transform(features)
 
-# 5. Run the automatic grouping model (K-Means) to make 3 groups
+5. Group the customers into 3 separate clusters
 kmeans = KMeans(n_clusters=3, random_state=42)
-df['risk_group'] = kmeans.fit_predict(scaled_features)
+df['risk_cluster'] = kmeans.fit_predict(scaled_features)
 
-# 6. Print out the mathematical averages for our 3 groups
-cluster_summary = df.groupby('risk_group')[['recency', 'frequency', 'monetary']].mean()
-print(cluster_summary)
-4. What the Customer Groups Mean for Business Risk
-Our sorting model naturally separates the store's buyers into three specific groups:
+6. Save this out to a new file so I can open it in Excel
+df.to_csv('final_customer_risk_segments.csv', index=False)
 
-Group 0: Low Risk / Big Spenders
+Step 3.3: Building the Excel Dashboard
+I opened my new Python spreadsheet in Excel and built a simple two-chart report:
 
-What the math shows: They shop very frequently, buy things constantly, and spend a lot of money.
+Pivot Table: I calculated how many people fell into each cluster and what their average spending looks like.
 
-What it means for risk: These are the safest, most valuable customers. The only business risk here is putting "all your eggs in one basket" if the store relies too heavily on just a few of these people.
+Pie Chart: Shows the size of each group so you can see if you have more active or inactive users.
 
-Group 1: Medium Risk / Regular Shoppers
+Bar Chart: Compares how much money each group spends on average.
 
-What the math shows: They shop occasionally, spend average amounts, and visit every now and then.
+Design: I removed the default background gridlines and gray buttons to make it look clean and tidy.
 
-What it means for risk: Safe, normal buyers. They have a predictable, low-risk profile and represent great opportunities for standard marketing updates.
+# 4. What the Results Mean
+The code split the shoppers into three very clear business groups:
 
-Group 2: High Risk / Inactive or Churned
+Cluster 0: Regular, Steady Shoppers (Medium Risk)
 
-What the math shows: It has been a very long time since their last purchase, and they have barely spent any money.
+They shop every now and then and spend average amounts. These are normal, safe buyers.
 
-What it means for risk: These accounts are dangerous for credit. They have either abandoned the shop completely or represent a high risk of failing to pay their bills. The store should limit credit options for this group.
+Cluster 1: Big Spenders (Low Risk)
 
-5. Citations, Research Tools, and Acknowledgments
-To build this project up to professional standards, a modern research and troubleshooting workflow was used, combining artificial intelligence with global developer forums.
+They shop constantly and spend a lot of money. They are the best, safest customers for the store.
 
-Artificial Intelligence (AI) Planning Citation
-Source: Gemini Large Language Model (Google AI).
+Cluster 2: Inactive Accounts (High Risk)
 
-Usage Acknowledgments: AI was explicitly used as a research co-pilot to outline the data pipeline steps, design the math structures, and write the initial drafts of the multi-table SQL joins. Additionally, AI was heavily relied upon for debugging assistance—specifically for identifying why the machine learning model rejected blank fields, which led to using the fillna(0) code fix.
+It has been a very long time since their last purchase, and they spend almost nothing. Extending credit to this group is dangerous because they have likely abandoned the shop.
 
-Developer Forums and Library Documentation Citations
-Stack Overflow & Windows MKL Threads: Cited for troubleshooting a specific memory warning (UserWarning: KMeans is known to have a memory leak on Windows with MKL). Forum discussions provided the solution to suppress background Windows warnings using Python's warnings.filterwarnings('ignore') library, ensuring a clean final presentation.
+# 5. Things That Helped Me (Citations)
+Since I am learning, I relied on a few resources to help me debug errors:
 
-Scikit-Learn Official User Guides: Referenced to understand how spatial distance sorting algorithms handle columns with different number scales (like comparing single-digit order counts to large dollar amounts). This research guided the use of the StandardScaler tool to format the numbers fairly before grouping them.
+Google Gemini AI: I used AI to help me outline the project steps, map out the SQL table joins, and fix a NameError I hit in my notebook when Python forgot my variables.
+
+Stack Overflow Forums: Helped me figure out how to write the warnings.filterwarnings('ignore') line to hide annoying background system warnings on my computer.
+
+Scikit-Learn Documentation: Read the user guides to learn why I needed to use a StandardScaler to balance my data numbers before grouping them.

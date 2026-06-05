@@ -1,0 +1,10 @@
+customer_id,first_name,last_name,recency,frequency,monetary,risk_cluster
+1,Allan,Sherwood,5.0,2,2300.61,2
+2,Barry,Zimmer,6.0,1,303.79,1
+3,Christine,Brown,4.0,1,1678.6,1
+4,David,Goldstein,0.0,2,788.3,0
+5,Erin,Valentino,3.0,1,299.0,1
+6,Frank Lee,Wilson,2.0,1,1539.28,1
+7,Gary,Hernandez,1.0,1,679.99,1
+8,Heather,Esway,,0,,1
+9,Rick,Raven,,0,,1
